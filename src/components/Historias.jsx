@@ -51,7 +51,7 @@ const Historias = ({ usuarios }) => {
             >
               ×
             </button>
-            <Image
+            <img
               src={historiaSeleccionada.foto}
               alt={historiaSeleccionada.nombre}
               width={300}
