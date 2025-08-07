@@ -22,7 +22,7 @@ export default function Muro() {
       .then((data) => setTextosHumanosJson(data));
     fetch("/data/datosTexto/fotos.json")
       .then((res) => res.json())
-      .then((data) => setFotosPublicaciones(data));
+      .then((data) => setFotosPublicaciones(data.slice(0, 5))); // Solo las primeras 5 fotos
   }, []);
 
   useEffect(() => {
@@ -72,14 +72,16 @@ export default function Muro() {
   }, [textosHumanosJson, fotosPublicaciones]);
 
   useEffect(() => {
-    fetch("https://randomuser.me/api/?results=5")
+    // Solo cargar fotos de personas
+    fetch("/data/datosTexto/fotosPersonas.json")
       .then((res) => res.json())
-      .then((data) => {
-        const usuarios = data.results.map((u) => ({
-          nombre: `${u.name.first} ${u.name.last}`,
-          foto: u.picture.large,
+      .then((fotosPersonas) => {
+        // Solo las primeras 5 fotos
+        const usuariosHistorias = fotosPersonas.slice(0, 5).map((foto, i) => ({
+          nombre: ``,
+          foto,
         }));
-        setUsuariosHistorias(usuarios);
+        setUsuariosHistorias(usuariosHistorias);
       });
   }, []);
 
