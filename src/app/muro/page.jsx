@@ -2,19 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-
-const textosHumanos = [
-  "Hoy fue un día increíble, aprendí mucho sobre React.",
-  "Me encanta salir a correr por las mañanas, ¿alguien más lo hace?",
-  "Ayer probé una receta nueva y salió deliciosa, se las recomiendo.",
-  "¿Alguien ha visto esa nueva serie en Netflix? ¡Está buenísima!",
-  "Estoy leyendo un libro fascinante sobre historia antigua, súper recomendado.",
-  "Nada como un buen café para empezar el día con energía.",
-  "Hoy me sentí muy inspirado para trabajar en mis proyectos personales.",
-  "¿Quién más está emocionado por el concierto de este fin de semana?",
-  "La naturaleza siempre me ayuda a encontrar paz y tranquilidad.",
-  "Un buen descanso hace maravillas para el ánimo y la productividad.",
-];
+import Historias from "@/components/Historias";
 
 export default function Muro() {
   const pathname = usePathname();
@@ -23,6 +11,19 @@ export default function Muro() {
   const [error, setError] = useState(null);
   const [textoNuevaPublicacion, setTextoNuevaPublicacion] = useState("");
   const [imagenNuevaPublicacion, setImagenNuevaPublicacion] = useState(null);
+
+  const [usuariosHistorias, setUsuariosHistorias] = useState([]);
+  const [textosHumanosJson, setTextosHumanosJson] = useState([]);
+  const [fotosPublicaciones, setFotosPublicaciones] = useState([]);
+
+  useEffect(() => {
+    fetch("/data/datosTexto/datos.json")
+      .then((res) => res.json())
+      .then((data) => setTextosHumanosJson(data));
+    fetch("/data/datosTexto/fotos.json")
+      .then((res) => res.json())
+      .then((data) => setFotosPublicaciones(data));
+  }, []);
 
   useEffect(() => {
     async function obtenerDatos() {
@@ -37,17 +38,22 @@ export default function Muro() {
         const posts = await resPosts.json();
         const usuarios = await resUsuarios.json();
 
+        // Espera a que los textos y fotos estén cargados
+        if (textosHumanosJson.length === 0 || fotosPublicaciones.length === 0)
+          return;
+
         const publicacionesConUsuario = posts.map((post, index) => {
           const usuario = usuarios[index % usuarios.length];
           return {
             id: post.id,
             titulo: post.title,
-            cuerpo: textosHumanos[index % textosHumanos.length],
+            cuerpo: textosHumanosJson[index % textosHumanosJson.length],
             usuario: {
               nombre: usuario?.name || "Usuario Desconocido",
               foto: `https://i.pravatar.cc/150?img=${(usuario?.id % 70) + 1}`,
             },
-            fotoPublicacion: `https://picsum.photos/seed/${post.id}/600/400`,
+            fotoPublicacion:
+              fotosPublicaciones[index % fotosPublicaciones.length],
             likes: 0,
           };
         });
@@ -60,7 +66,21 @@ export default function Muro() {
       }
     }
 
-    obtenerDatos();
+    if (textosHumanosJson.length > 0 && fotosPublicaciones.length > 0) {
+      obtenerDatos();
+    }
+  }, [textosHumanosJson, fotosPublicaciones]);
+
+  useEffect(() => {
+    fetch("https://randomuser.me/api/?results=5")
+      .then((res) => res.json())
+      .then((data) => {
+        const usuarios = data.results.map((u) => ({
+          nombre: `${u.name.first} ${u.name.last}`,
+          foto: u.picture.large,
+        }));
+        setUsuariosHistorias(usuarios);
+      });
   }, []);
 
   const toggleLike = (id) => {
@@ -119,7 +139,7 @@ export default function Muro() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-6 pt-20 h-screen flex flex-col">
-      {/* Formulario de nueva publicación fijo debajo del header */}
+      <Historias usuarios={usuariosHistorias} />
       <form
         onSubmit={manejarNuevaPublicacion}
         className="bg-white p-4 rounded-lg shadow mb-4 sticky top-[64px] z-10"
