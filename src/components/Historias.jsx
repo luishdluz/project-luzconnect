@@ -51,11 +51,11 @@ const Historias = ({ usuarios }) => {
             >
               ×
             </button>
-            <img
+            <Image
               src={historiaSeleccionada.foto}
-              alt={historiaSeleccionada.nombre}
-              width={300}
-              height={300}
+              alt="Imagen de prueba"
+              width={600}
+              height={400}
               className="rounded"
             />
             <p className="text-center mt-2 font-semibold">
