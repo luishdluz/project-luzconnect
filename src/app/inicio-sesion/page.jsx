@@ -45,7 +45,6 @@ export default function InicioSesion() {
   };
 
   if (cargando) {
-    // Aquí puedes poner un loader o devolver null para no mostrar nada
     return null;
   }
 

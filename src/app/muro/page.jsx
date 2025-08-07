@@ -24,7 +24,6 @@ export default function Muro() {
   const [textoNuevaPublicacion, setTextoNuevaPublicacion] = useState("");
   const [imagenNuevaPublicacion, setImagenNuevaPublicacion] = useState(null);
 
-  // Cargar publicaciones simuladas con usuarios
   useEffect(() => {
     async function obtenerDatos() {
       try {
@@ -64,7 +63,6 @@ export default function Muro() {
     obtenerDatos();
   }, []);
 
-  // Manejar "like" en una publicación
   const toggleLike = (id) => {
     setPublicaciones((prev) =>
       prev.map((pub) =>
@@ -73,7 +71,6 @@ export default function Muro() {
     );
   };
 
-  // Manejar subida de imagen en nueva publicación
   const manejarArchivo = (e) => {
     const archivo = e.target.files[0];
     if (archivo) {
@@ -85,7 +82,6 @@ export default function Muro() {
     }
   };
 
-  // Crear nueva publicación
   const manejarNuevaPublicacion = (e) => {
     e.preventDefault();
     if (!textoNuevaPublicacion.trim()) return;
@@ -165,7 +161,6 @@ export default function Muro() {
         )}
       </form>
 
-      {/* Contenedor scrollable de publicaciones */}
       <div className="flex-1 overflow-y-auto space-y-6 pb-20">
         {publicaciones.map((pub) => (
           <article

@@ -14,12 +14,10 @@ export default function Header() {
   const rutasConMenu = ["/muro", "/perfil", "/admin"];
   const mostrarMenu = rutasConMenu.includes(pathname);
 
-  // Carga usuario al montar el componente
   useEffect(() => {
     cargarUsuario();
   }, []);
 
-  // Carga usuario cada vez que cambia la ruta para actualizar datos
   useEffect(() => {
     cargarUsuario();
   }, [pathname]);
@@ -55,7 +53,6 @@ export default function Header() {
 
         {mostrarMenu && (
           <>
-            {/* Botón hamburguesa en móviles */}
             <button
               className="sm:hidden text-gray-700"
               onClick={() => setMenuAbierto(!menuAbierto)}
@@ -64,9 +61,7 @@ export default function Header() {
               <Menu size={24} />
             </button>
 
-            {/* Menú horizontal en pantallas grandes */}
             <nav className="hidden sm:flex space-x-6 items-center">
-              {/* Ocultar "Inicio" cuando ya estás en /muro */}
               {pathname !== "/muro" && pathname !== "/admin" && (
                 <Link
                   href="/muro"
@@ -77,7 +72,6 @@ export default function Header() {
                 </Link>
               )}
 
-              {/* Mostrar foto y nombre cuando estás en /muro */}
               {pathname === "/muro" && usuario && (
                 <button
                   onClick={() => router.push("/perfil")}
@@ -93,7 +87,6 @@ export default function Header() {
                 </button>
               )}
 
-              {/* Mostrar botón perfil solo si NO estamos en /perfil ni en /muro */}
               {pathname == "/home" && (
                 <Link
                   href="/perfil"
@@ -116,7 +109,6 @@ export default function Header() {
         )}
       </div>
 
-      {/* Menú desplegable para móvil */}
       {mostrarMenu && menuAbierto && (
         <nav className="sm:hidden bg-white border-t border-gray-200 px-4 pb-3">
           {pathname !== "/muro" && pathname !== "/admin" && (
