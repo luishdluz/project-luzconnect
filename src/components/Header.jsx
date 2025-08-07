@@ -8,15 +8,23 @@ import Link from "next/link";
 export default function Header() {
   const [menuAbierto, setMenuAbierto] = useState(false);
   const [usuario, setUsuario] = useState(null);
-  const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
   const rutasConMenu = ["/muro", "/perfil"];
   const mostrarMenu = rutasConMenu.includes(pathname);
 
+  // Carga usuario al montar el componente
   useEffect(() => {
-    setIsMounted(true);
+    cargarUsuario();
+  }, []);
+
+  // Carga usuario cada vez que cambia la ruta para actualizar datos
+  useEffect(() => {
+    cargarUsuario();
+  }, [pathname]);
+
+  function cargarUsuario() {
     const sesion = localStorage.getItem("sesionActiva");
     if (sesion) {
       try {
@@ -25,8 +33,10 @@ export default function Header() {
       } catch (e) {
         console.error("Error al leer la sesión:", e);
       }
+    } else {
+      setUsuario(null);
     }
-  }, []);
+  }
 
   const manejarCerrarSesion = () => {
     localStorage.removeItem("sesionActiva");
@@ -36,7 +46,6 @@ export default function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-200 shadow-sm z-50">
       <div className="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
-        {/* Usamos Link para evitar error de hidratación */}
         <Link
           href="/muro"
           className="text-xl font-bold text-[#04b3bb] cursor-pointer"
@@ -68,8 +77,8 @@ export default function Header() {
                 </Link>
               )}
 
-              {/* Mostrar foto y nombre solo si ya se montó el componente para evitar hidratación */}
-              {pathname === "/muro" && usuario && isMounted && (
+              {/* Mostrar foto y nombre cuando estás en /muro */}
+              {pathname === "/muro" && usuario && (
                 <button
                   onClick={() => router.push("/perfil")}
                   className="flex items-center gap-2 cursor-pointer hover:text-[#04b3bb] bg-transparent border-none p-0"
@@ -120,7 +129,7 @@ export default function Header() {
             </Link>
           )}
 
-          {pathname === "/muro" && usuario && isMounted && (
+          {pathname === "/muro" && usuario && (
             <button
               onClick={() => router.push("/perfil")}
               className="block py-2 text-gray-700 hover:text-[#04b3bb] flex items-center gap-2 bg-transparent border-none p-0"

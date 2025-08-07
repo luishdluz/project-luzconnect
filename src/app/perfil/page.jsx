@@ -35,7 +35,6 @@ export default function Perfil() {
       const lector = new FileReader();
       lector.onloadend = () => {
         setFoto(lector.result);
-        toast.success("Foto actualizada");
       };
       lector.readAsDataURL(archivo);
     }
