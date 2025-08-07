@@ -11,7 +11,7 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const rutasConMenu = ["/muro", "/perfil"];
+  const rutasConMenu = ["/muro", "/perfil", "/admin"];
   const mostrarMenu = rutasConMenu.includes(pathname);
 
   // Carga usuario al montar el componente
@@ -67,7 +67,7 @@ export default function Header() {
             {/* Menú horizontal en pantallas grandes */}
             <nav className="hidden sm:flex space-x-6 items-center">
               {/* Ocultar "Inicio" cuando ya estás en /muro */}
-              {pathname !== "/muro" && (
+              {pathname !== "/muro" && pathname !== "/admin" && (
                 <Link
                   href="/muro"
                   className="text-gray-700 hover:text-[#04b3bb] flex items-center gap-1"
@@ -94,7 +94,7 @@ export default function Header() {
               )}
 
               {/* Mostrar botón perfil solo si NO estamos en /perfil ni en /muro */}
-              {pathname !== "/perfil" && pathname !== "/muro" && (
+              {pathname == "/home" && (
                 <Link
                   href="/perfil"
                   className="text-gray-700 hover:text-[#04b3bb] flex items-center gap-1"
@@ -119,7 +119,7 @@ export default function Header() {
       {/* Menú desplegable para móvil */}
       {mostrarMenu && menuAbierto && (
         <nav className="sm:hidden bg-white border-t border-gray-200 px-4 pb-3">
-          {pathname !== "/muro" && (
+          {pathname !== "/muro" && pathname !== "/admin" && (
             <Link
               href="/muro"
               className="block py-2 text-gray-700 hover:text-[#04b3bb] flex items-center gap-2"
@@ -144,7 +144,7 @@ export default function Header() {
             </button>
           )}
 
-          {pathname !== "/perfil" && pathname !== "/muro" && (
+          {pathname == "/home" && (
             <Link
               href="/perfil"
               className="block py-2 text-gray-700 hover:text-[#04b3bb] flex items-center gap-2"

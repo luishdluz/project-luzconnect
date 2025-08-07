@@ -40,7 +40,8 @@ export default function InicioSesion() {
 
     localStorage.setItem("sesionActiva", JSON.stringify(usuarioEncontrado));
 
-    router.push("/muro");
+    if (usuarioEncontrado.nickname === "admin") router.push("/admin");
+    else router.push("/muro");
   };
 
   if (cargando) {
