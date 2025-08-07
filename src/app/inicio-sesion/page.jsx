@@ -1,44 +1,110 @@
 "use client";
 
-export default function InicioSesion({ setUsuarioAutenticado }) {
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+
+export default function InicioSesion() {
+  const router = useRouter();
+
+  const [nickname, setNickname] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [cargando, setCargando] = useState(true);
+
+  useEffect(() => {
+    const sesion = localStorage.getItem("sesionActiva");
+    if (sesion) {
+      router.replace("/muro");
+    } else {
+      setCargando(false);
+    }
+  }, [router]);
+
+  const manejarInicioSesion = (e) => {
+    e.preventDefault();
+    setError("");
+
+    const usuariosGuardados =
+      JSON.parse(localStorage.getItem("usuarios")) || [];
+    console.log(usuariosGuardados);
+
+    const usuarioEncontrado = usuariosGuardados.find(
+      (u) => u.nickname === nickname && u.password === password
+    );
+
+    if (!usuarioEncontrado) {
+      setError("Nickname o contraseña incorrectos.");
+      return;
+    }
+
+    localStorage.setItem("sesionActiva", JSON.stringify(usuarioEncontrado));
+
+    router.push("/muro");
+  };
+
+  if (cargando) {
+    // Aquí puedes poner un loader o devolver null para no mostrar nada
+    return null;
+  }
+
   return (
-    <main className="w-full pt-[64px] pb-[64px] bg-white">
-      <section className="max-w-xl mx-auto px-4 py-6 bg-white shadow-lg rounded-md border border-[#E5E7EB]">
-        <h1 className="text-2xl font-bold text-center mb-6 text-[#3b7878]">
-          Inicio de Sesión
-        </h1>
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      <main className="flex-grow flex items-center justify-center px-4 py-8">
+        <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-md">
+          <h1 className="text-2xl font-bold mb-6 text-center">
+            Iniciar sesión
+          </h1>
 
-        <form className="space-y-4">
-          <input
-            type="text"
-            placeholder="Usuario"
-            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#04b3bb]"
-            autoComplete="username"
-          />
+          <form onSubmit={manejarInicioSesion} className="space-y-4">
+            {error && (
+              <div className="text-red-600 text-sm font-medium text-center">
+                {error}
+              </div>
+            )}
 
-          <input
-            type="password"
-            placeholder="Contraseña"
-            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-[#04b3bb]"
-            autoComplete="current-password"
-          />
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Nickname
+              </label>
+              <input
+                type="text"
+                value={nickname}
+                onChange={(e) => setNickname(e.target.value)}
+                required
+                className="mt-1 w-full px-4 py-2 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#04b3bb]"
+              />
+            </div>
 
-          <button
-            type="submit"
-            className="w-full bg-[#04b3bb] hover:bg-[#039ea6] text-white font-semibold py-2 px-4 rounded"
-          >
-            Iniciar Sesión
-          </button>
-        </form>
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
+                Contraseña
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="mt-1 w-full px-4 py-2 border rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#04b3bb]"
+              />
+            </div>
 
-        {/* Enlace a registro */}
-        <p className="mt-6 text-center text-sm text-gray-600">
-          ¿No tienes cuenta?{" "}
-          <a href="/registro" className="text-blue-600 underline">
-            Regístrate aquí
-          </a>
-        </p>
-      </section>
-    </main>
+            <button
+              type="submit"
+              className="w-full py-2 bg-[#04b3bb] text-white rounded-xl hover:bg-[#0398a0] transition"
+            >
+              Entrar
+            </button>
+          </form>
+
+          <p className="mt-4 text-center text-sm text-gray-600">
+            ¿No tienes una cuenta?{" "}
+            <Link href="/registro" className="text-[#04b3bb] hover:underline">
+              Regístrate
+            </Link>
+          </p>
+        </div>
+      </main>
+    </div>
   );
 }
